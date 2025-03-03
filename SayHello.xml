@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Commands>
-    <Command name="JavaScript" pauseBefore="false" promptUser="false" label="Say Hello" tooltip="Say Hello" ID="922409e13a6342f6b68020d03cd0f87d">
-        <Items>
-            <Item name="ScriptCode" type="text" value="%%SCRIPTSOURCE%%"/>
-            <Item name="ScriptName" type="text" value=""/>
-        </Items>
-    </Command>
-</Commands>
