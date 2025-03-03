@@ -14,9 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up PowerShell
-      uses: PowerShell/setup-powershell@v1
-
     - name: Run PowerShell script to combine JS and XML
       shell: pwsh # Use PowerShell Core (pwsh) for better cross-platform compatibility if needed
       run: |
