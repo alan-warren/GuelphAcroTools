@@ -95,7 +95,7 @@ Write-Verbose "Replacing placeholder '$Placeholder' in XML template..."
 $modifiedXml = $xmlTemplate -replace [regex]::Escape($Placeholder), $encodedScript
 
 # Determine output file path (e.g., template_modified.xml in the same directory)
-$outputPath = Join-Path -Path (Split-Path -Path $XmlTemplatePath -Parent) -ChildPath ("{0}_modified{1}" -f ([System.IO.Path]::GetFileNameWithoutExtension($XmlTemplatePath)), ([System.IO.Path]::GetExtension($XmlTemplatePath)))
+$outputPath = Join-Path -Path (Split-Path -Path "../$XmlTemplatePath" -Parent) -ChildPath ("{0}_modified{1}" -f ([System.IO.Path]::GetFileNameWithoutExtension($XmlTemplatePath)), ([System.IO.Path]::GetExtension($XmlTemplatePath)))
 
 Write-Verbose "Saving modified XML to: '$outputPath'"
 try {
