@@ -1,0 +1,54 @@
+name: Combine JS and XML
+
+on:
+  push:
+    branches: [ "main", "develop" ] # Or your main branches
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  combine:
+    runs-on: windows-latest # Or ubuntu-latest if you adapt the script to run on Linux
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up PowerShell
+      uses: PowerShell/setup-powershell@v1
+
+    - name: Run PowerShell script to combine JS and XML
+      shell: pwsh # Use PowerShell Core (pwsh) for better cross-platform compatibility if needed
+      run: |
+        # Example assuming your script and files are in the suggested structure
+        $scriptDir = "./scripts"
+        $jsFilesDir = "./js_files"
+        $xmlTemplatesDir = "./xml_templates"
+        $outputDir = "./output_xmls" # Create an output directory
+
+        New-Item -ItemType Directory -Path $outputDir -Force | Out-Null # Ensure output directory exists
+
+        Get-ChildItem -Path $xmlTemplatesDir -Filter "*.xml" | ForEach-Object {
+          $xmlTemplate = $_.FullName
+          $templateNameWithoutExt = $_.BaseName # Filename without extension
+
+          # Assuming JS filename is same as template name (e.g., template1.xml and template1.js)
+          $jsFile = Join-Path -Path $jsFilesDir -ChildPath "$templateNameWithoutExt.js"
+
+          if (Test-Path -Path $jsFile) {
+            Write-Host "Processing template: '$xmlTemplate' with script: '$jsFile'"
+            .\scripts\EncodeJavaScriptToXml.ps1 -ScriptPath $jsFile -XmlTemplatePath $xmlTemplate -Placeholder "%%SCRIPTSOURCE%%" # Adjust placeholder if needed
+
+            # Move the modified XML to the output directory and rename it
+            $modifiedXmlName = "{0}_combined{1}" -f $templateNameWithoutExt, $_.Extension
+            Move-Item -Path ("{0}_modified{1}" -f $templateNameWithoutExt, $_.Extension) -Destination (Join-Path -Path $outputDir -ChildPath $modifiedXmlName) -Force
+          } else {
+            Write-Warning "Warning: JavaScript file not found for template '$xmlTemplate'. Expected file: '$jsFile'"
+          }
+        }
+
+    - name: Upload Generated XMLs as Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: combined-xml-files
+        path: ./output_xmls # Upload the output directory
